@@ -1,0 +1,192 @@
+/* Base styles */
+body {
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .bg-primary-600 {
+    background-color: #3b82f6;
+  }
+  
+  /* Calendar header */
+  .calendar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .calendar-header .buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .calendar-header .month-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+  
+  .calendar-header button {
+    padding: 0.5rem;
+    border-radius: 50%;
+    background-color: #f3f4f6;
+    transition: background-color 0.3s;
+  }
+  
+  .calendar-header button:hover {
+    background-color: #e5e7eb;
+  }
+  
+  /* Calendar grid */
+  .calendar-grid {
+    overflow-x: auto;
+  }
+  
+  .calendar-grid .week-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid #e5e7eb;
+    text-align: center;
+  }
+  
+  .calendar-grid .week-days div {
+    padding: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+  }
+  
+  .calendar-grid .time-slot {
+    display: grid;
+    grid-template-columns: 1fr repeat(7, 1fr);
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .calendar-grid .time-slot div {
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  /* Time slots styling */
+  .time-slot {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .time-slot:hover {
+    background-color: #f9fafb;
+  }
+  
+  /* Slot availability */
+  .slot-status-available {
+    border: 2px dashed #10b981;
+  }
+  
+  .slot-status-booked {
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+  }
+  
+  .slot-status-available .slot-info {
+    color: #10b981;
+  }
+  
+  .slot-status-booked .slot-info {
+    color: #ef4444;
+  }
+  
+  .slot-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  /* Trash icon */
+  .slot-info button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* Media Queries for Responsiveness */
+  
+  /* Mobile Devices (up to 600px) */
+  @media (max-width: 600px) {
+    .calendar-header .month-title {
+      font-size: 1rem;
+    }
+  
+    .calendar-header .buttons {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .calendar-header button {
+      margin-top: 0.5rem;
+    }
+  
+    .calendar-grid {
+      width: 100%;
+      overflow-x: auto;
+    }
+  
+    .calendar-grid .week-days {
+      grid-template-columns: repeat(7, 1fr);
+    }
+  
+    .calendar-grid .time-slot {
+      grid-template-columns: 1fr;
+    }
+  
+    .calendar-grid .time-slot div {
+      padding: 0.5rem;
+      font-size: 0.75rem;
+    }
+  }
+  
+  /* Tablet Devices (600px to 900px) */
+  @media (min-width: 600px) and (max-width: 900px) {
+    .calendar-header .month-title {
+      font-size: 1.125rem;
+    }
+  
+    .calendar-grid .week-days {
+      grid-template-columns: repeat(7, 1fr);
+    }
+  
+    .calendar-grid .time-slot {
+      grid-template-columns: 1fr repeat(6, 1fr);
+    }
+  
+    .calendar-grid .time-slot div {
+      padding: 0.75rem;
+      font-size: 0.875rem;
+    }
+  }
+  
+  /* Large Tablets / Small Desktops (900px to 1200px) */
+  @media (min-width: 900px) and (max-width: 1200px) {
+    .calendar-grid .week-days {
+      grid-template-columns: repeat(7, 1fr);
+    }
+  
+    .calendar-grid .time-slot {
+      grid-template-columns: 1fr repeat(7, 1fr);
+    }
+  }
+  
+  /* Desktops (1200px and up) */
+  @media (min-width: 1200px) {
+    .calendar-grid .week-days {
+      grid-template-columns: repeat(7, 1fr);
+    }
+  
+    .calendar-grid .time-slot {
+      grid-template-columns: 1fr repeat(7, 1fr);
+    }
+  }
+  

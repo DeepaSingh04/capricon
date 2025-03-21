@@ -1,0 +1,177 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 min-h-screen transition-colors duration-300;
+  }
+}
+
+@layer components {
+  .sidebar-link {
+    @apply flex items-center px-4 py-3 text-gray-600 dark:text-gray-300 rounded-lg 
+           hover:bg-primary-100 dark:hover:bg-primary-900/20 transition-all 
+           duration-200 ease-in-out transform hover:scale-105;
+  }
+
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50;
+  }
+
+  .modal-content {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 relative transform 
+           transition-all duration-300 w-full max-w-lg;
+  }
+
+  .button-primary {
+    @apply px-5 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 
+           transition-colors duration-200 text-base;
+  }
+
+  .button-secondary {
+    @apply px-5 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 
+           rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors 
+           duration-200 text-base;
+  }
+}
+
+/* Custom Calendar */
+.rdp-custom {
+  --rdp-cell-size: 42px;
+  --rdp-accent-color: #0ea5e9;
+  --rdp-background-color: #e0f2fe;
+  margin: 0;
+}
+
+.dark .rdp-custom {
+  --rdp-accent-color: #38bdf8;
+  --rdp-background-color: #075985;
+  color: white;
+}
+
+.rdp-custom .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  @apply bg-primary-100 dark:bg-primary-900/20;
+}
+
+.dark .rdp-custom .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  @apply bg-primary-800/50;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar {
+  @apply scrollbar-thin scrollbar-thumb-primary-400 scrollbar-track-gray-100 
+         dark:scrollbar-thumb-primary-600 dark:scrollbar-track-gray-800;
+}
+
+/* Animations */
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) { /* Laptop */
+  .modal-content {
+    max-width: 70%;
+    padding: 5%;
+  }
+
+  .sidebar-link {
+    @apply px-3 py-2 text-base;
+  }
+
+  .button-primary, 
+  .button-secondary {
+    @apply text-sm px-4 py-2;
+  }
+}
+
+@media (max-width: 768px) { /* Tablet */
+  .modal-content {
+    max-width: 85%;
+    padding: 4%;
+  }
+
+  .sidebar-link {
+    @apply px-3 py-2 text-sm;
+  }
+
+  .button-primary,
+  .button-secondary {
+    @apply text-sm px-3 py-2;
+  }
+
+  .rdp-custom {
+    --rdp-cell-size: 38px;
+  }
+
+  /* Adjusting calendar for mobile and tablet devices */
+  .rdp-custom .rdp-button {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 640px) { /* Mobile */
+  .modal-content {
+    max-width: 92%;
+    padding: 3%;
+  }
+
+  .sidebar-link {
+    @apply px-2 py-2 text-xs;
+  }
+
+  .button-primary,
+  .button-secondary {
+    @apply text-xs px-3 py-1;
+  }
+
+  .rdp-custom {
+    --rdp-cell-size: 32px;
+  }
+
+  /* Reducing size for mobile calendar buttons */
+  .rdp-custom .rdp-button {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+  }
+}
