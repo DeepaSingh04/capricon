@@ -1,76 +1,46 @@
-import React from 'react';
-import { Toaster } from 'react-hot-toast';
+import React, { useState } from 'react';
+import { ThemeProvider } from './context/ThemeContext';
+import { AppointmentProvider } from './context/AppointmentContext';
+import { SupportProvider } from './context/SupportContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Sidebar from './components/Sidebar';
 import Calendar from './components/Calendar';
-import AppointmentModal from './components/AppointmentModal';
-import DatePicker from './components/DatePicker';
+import { Toaster } from 'react-hot-toast';
 import DoctorsList from './components/DoctorsList';
-import { AppointmentProvider } from './context/AppointmentContext';
-import { ThemeProvider } from './context/ThemeContext';
 import { AnimatePresence } from 'framer-motion';
+import Auth from './components/Auth';
 
-function App() {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedDate, setSelectedDate] = React.useState(null);
-  const [isDatePickerOpen, setIsDatePickerOpen] = React.useState(false);
-  const [isDoctorsListOpen, setIsDoctorsListOpen] = React.useState(false);
+function MainApp() {
+  const [showDoctors, setShowDoctors] = useState(false);
+  const { currentUser } = useAuth();
 
-  const handleDateSelect = (date) => {
-    setSelectedDate(date);
-    setIsDatePickerOpen(false);
-    setIsModalOpen(true);
-  };
+  if (!currentUser) {
+    return <Auth />;
+  }
 
   return (
-    <ThemeProvider>
-      <AppointmentProvider>
-        <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-          {/* Sidebar component */}
-          <Sidebar 
-            onDoctorsClick={() => setIsDoctorsListOpen(true)}
-            onDatePickerClick={() => setIsDatePickerOpen(true)}
-          />
-          
-          {/* Main content area */}
-          <main className="flex-1 p-8">
-            <div className="max-w-7xl mx-auto">
-              <Calendar 
-                onDateSelect={(date) => {
-                  setSelectedDate(date);
-                  setIsModalOpen(true);
-                }}
-              />
-            </div>
-          </main>
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      <Sidebar onDoctorsClick={() => setShowDoctors(true)} />
+      <main className="flex-1 overflow-auto">
+        <Calendar />
+      </main>
+      {showDoctors && <DoctorsList onClose={() => setShowDoctors(false)} />}
+    </div>
+  );
+}
 
-          {/* Modals */}
-          <AnimatePresence>
-            {isModalOpen && (
-              <AppointmentModal 
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                selectedDate={selectedDate}
-              />
-            )}
-
-            {isDatePickerOpen && (
-              <DatePicker
-                selectedDate={selectedDate}
-                onSelect={handleDateSelect}
-                onClose={() => setIsDatePickerOpen(false)}
-              />
-            )}
-
-            {isDoctorsListOpen && (
-              <DoctorsList
-                onClose={() => setIsDoctorsListOpen(false)}
-              />
-            )}
-          </AnimatePresence>
-        </div>
-        <Toaster />
-      </AppointmentProvider>
-    </ThemeProvider>
+function App() {
+  return (
+    <AuthProvider>
+      <ThemeProvider>
+        <AppointmentProvider>
+          <SupportProvider>
+            <MainApp />
+            <Toaster position="top-center" />
+          </SupportProvider>
+        </AppointmentProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 

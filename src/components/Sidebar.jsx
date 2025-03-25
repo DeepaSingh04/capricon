@@ -1,33 +1,41 @@
 import React, { useState } from 'react';
-import { Calendar, Users, FileText, Settings, LogOut, HelpCircle, Phone, Mail, ChevronDown } from 'lucide-react';
+import { Users, FileText, Settings, LogOut, Mail, ChevronDown, Calendar, Home } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useAppointments } from '../context/AppointmentContext';
-import ContactFormModal from './ContactForm'; 
+import { useAuth } from '../context/AuthContext';
+import DoctorsList from './DoctorsList';
+import HomeVisitForm from './HomeVisitForm';
+import SupportModal from './SupportModal';
 
-function Sidebar({ onDoctorsClick, onDatePickerClick }) {
+function Sidebar({ onDoctorsClick }) {
   const { isDarkMode, toggleTheme } = useTheme();
   const [showSettings, setShowSettings] = useState(false);
-  const { records } = useAppointments();
-  const [showRecords, setShowRecords] = useState(false);
-  const [showContactForm, setShowContactForm] = useState(false); // State for Contact Form
+  const { appointments } = useAppointments();
+  const [showAppointments, setShowAppointments] = useState(false);
+  const [showHomeVisit, setShowHomeVisit] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
+  const { logout } = useAuth();
 
-  const handleLogout = () => {
-    toast.success('Successfully logged out! Thank you for using our service.', {
-      duration: 3000,
-      position: 'top-center',
-      style: {
-        background: isDarkMode ? '#1f2937' : '#ffffff',
-        color: isDarkMode ? '#ffffff' : '#000000',
-      },
-    });
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success('Successfully logged out! Thank you for using our service.', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: isDarkMode ? '#1f2937' : '#ffffff',
+          color: isDarkMode ? '#ffffff' : '#000000',
+        },
+      });
+    } catch (error) {
+      toast.error('Failed to log out. Please try again.');
+    }
   };
 
   const settingsOptions = [
-    { icon: HelpCircle, label: 'Help', onClick: () => toast.success('Help Center Opening...') },
-    { icon: Phone, label: 'Contact', onClick: () => setShowContactForm(true) }, // Open Contact Form Modal
-    { icon: Mail, label: 'Support', onClick: () => toast.success('Support Chat Opening...') },
+    { icon: Mail, label: 'Support', onClick: () => setShowSupport(true) },
   ];
 
   return (
@@ -52,16 +60,6 @@ function Sidebar({ onDoctorsClick, onDatePickerClick }) {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={onDatePickerClick}
-          className="sidebar-link w-full"
-        >
-          <Calendar className="h-5 w-5 mr-3 text-primary-500" />
-          Appointments
-        </motion.button>
-
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
           onClick={onDoctorsClick}
           className="sidebar-link w-full"
         >
@@ -69,38 +67,59 @@ function Sidebar({ onDoctorsClick, onDatePickerClick }) {
           Doctors
         </motion.button>
 
-        {/* Records Dropdown */}
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={() => setShowRecords(!showRecords)}
+          onClick={() => setShowHomeVisit(true)}
+          className="sidebar-link w-full"
+        >
+          <Home className="h-5 w-5 mr-3 text-primary-500" />
+          Home Visit
+        </motion.button>
+
+        {/* Appointments Dropdown */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => setShowAppointments(!showAppointments)}
           className="sidebar-link w-full"
         >
           <FileText className="h-5 w-5 mr-3 text-primary-500" />
-          Records
-          <ChevronDown className={`ml-auto h-4 w-4 transform transition-transform ${showRecords ? 'rotate-180' : ''}`} />
+          Appointments
+          <ChevronDown className={`ml-auto h-4 w-4 transform transition-transform ${showAppointments ? 'rotate-180' : ''}`} />
         </motion.button>
 
         <AnimatePresence>
-          {showRecords && (
+          {showAppointments && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="ml-4 space-y-2 overflow-hidden max-h-40 overflow-y-auto"
             >
-              {records.map((record) => (
+              {appointments.length === 0 ? (
                 <motion.div
-                  key={record.id}
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
                 >
-                  <p className="font-medium text-primary-600 dark:text-primary-400">{record.patientName}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">{record.date}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{record.diagnosis}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">No appointments booked yet</p>
                 </motion.div>
-              ))}
+              ) : (
+                appointments.map((appointment) => (
+                  <motion.div
+                    key={appointment.id}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
+                  >
+                    <p className="font-medium text-primary-600 dark:text-primary-400">{appointment.name}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{appointment.date}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{appointment.time}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{appointment.disease}</p>
+                  </motion.div>
+                ))
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -169,7 +188,8 @@ function Sidebar({ onDoctorsClick, onDatePickerClick }) {
 
       {/* Contact Form Modal */}
       <AnimatePresence>
-        {showContactForm && <ContactFormModal onClose={() => setShowContactForm(false)} />}
+        {showHomeVisit && <HomeVisitForm onClose={() => setShowHomeVisit(false)} />}
+        {showSupport && <SupportModal onClose={() => setShowSupport(false)} />}
       </AnimatePresence>
     </motion.aside>
   );

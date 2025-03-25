@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
 const initialAppointments = [
@@ -29,7 +29,7 @@ const initialAppointments = [
 const AppointmentContext = createContext();
 
 export function AppointmentProvider({ children }) {
-  const [appointments, setAppointments] = useState(initialAppointments);
+  const [appointments, setAppointments] = useState([]);
   const [records] = useState([
     {
       id: 1,
@@ -51,6 +51,19 @@ export function AppointmentProvider({ children }) {
     }
   ]);
 
+  // Load appointments from localStorage on initial render
+  useEffect(() => {
+    const savedAppointments = localStorage.getItem('appointments');
+    if (savedAppointments) {
+      setAppointments(JSON.parse(savedAppointments));
+    }
+  }, []);
+
+  // Save appointments to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('appointments', JSON.stringify(appointments));
+  }, [appointments]);
+
   const isSlotBooked = (date, hour) => {
     return appointments.some(apt => 
       apt.date === date && 
@@ -70,7 +83,7 @@ export function AppointmentProvider({ children }) {
       id: appointments.length + 1,
       status: 'pending'
     };
-    setAppointments([...appointments, newAppointment]);
+    setAppointments(prev => [...prev, newAppointment]);
     toast.success('Appointment booked successfully!');
     return true;
   };
@@ -82,7 +95,7 @@ export function AppointmentProvider({ children }) {
       return;
     }
 
-    setAppointments(appointments.map(apt => 
+    setAppointments(prev => prev.map(apt => 
       apt.id === appointmentId 
         ? { ...apt, status: 'cancelled' }
         : apt
@@ -98,8 +111,8 @@ export function AppointmentProvider({ children }) {
       }
     }
 
-    setAppointments(
-      appointments.map((apt) =>
+    setAppointments(prev => 
+      prev.map(apt => 
         apt.id === appointmentId ? { ...apt, ...updatedData } : apt
       )
     );
